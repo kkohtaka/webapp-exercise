@@ -1,0 +1,19 @@
+#!/bin/bash
+# Copyright 2016, Z Lab Corporation. All rights reserved.
+
+export DATABASE_USER=docker
+export DATABASE_PASS=docker
+export DATABASE_HOST=192.168.99.100
+export DATABASE_PORT=5432
+export DATABASE_NAME=docker
+
+# NOTE: http://stackoverflow.com/questions/4774054/reliable-way-for-a-bash-script-to-get-the-full-path-to-itself
+pushd $(dirname $0) > /dev/null
+export SCRIPT_PATH=$(pwd)
+popd > /dev/null
+
+node <<EOT
+var path = require('path');
+var database = require(path.join(process.env.SCRIPT_PATH, '../models/database.js'));
+database.resetMessagesTable();
+EOT
