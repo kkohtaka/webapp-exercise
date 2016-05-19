@@ -8,7 +8,10 @@
     nodemon({
       script: './bin/www',
       ext: 'js',
-      ignore: ['gulpfile.js'],
+      ignore: [
+        './gulpfile.js',
+        './node_modules/**',
+      ],
       env: {
         NODE_ENV: 'development',
       },
