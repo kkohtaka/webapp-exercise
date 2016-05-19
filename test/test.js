@@ -1,13 +1,64 @@
 // Copyright 2016, Z Lab Corporation. All rights reserved.
 
 (function () {
-  var assert = require('chai').assert;
-  describe('Array', function () {
-    describe('#indexOf()', function () {
-      it('should return -1 when the value is not present', function () {
-        assert.equal(-1, [1, 2, 3].indexOf(5));
-        assert.equal(-1, [1, 2, 3].indexOf(0));
+  var app = require('../app');
+  var agent = require('supertest').agent(app);
+  var should = require('should');
+
+  describe('POST /api/messages', function () {
+    it('should return 200 OK', function (done) {
+      var message = {
+        text: 'Hello, Z Lab Web Application.',
+      };
+      agent.post('/api/messages')
+      .send(message)
+      .expect(200)
+      .end(function (err, res) {
+        should.not.exist(err);
+        done();
       });
     });
   });
+
+  describe('GET /api/messages', function () {
+    it('should return 200 OK', function (done) {
+      agent.get('/api/messages')
+      .send()
+      .expect(200)
+      .end(function (err, res) {
+        should.not.exist(err);
+        done();
+      });
+    });
+  });
+
+  describe('PUT /api/messages/:messageId', function () {
+    it('should return 200 OK', function (done) {
+      var messageId = '42';
+      var message = {
+        text: 'Bye, Z Lab Web Application.',
+      };
+      agent.put('/api/messages/' + messageId)
+      .send(message)
+      .expect(200)
+      .end(function (err, res) {
+        should.not.exist(err);
+        done();
+      });
+    });
+  });
+
+  describe('POST /api/messages/:messageId', function () {
+    it('should return 200 OK', function (done) {
+      var messageId = '42';
+      agent.delete('/api/messages/' + messageId)
+      .send()
+      .expect(200)
+      .end(function (err, res) {
+        should.not.exist(err);
+        done();
+      });
+    });
+  });
+
 }());
