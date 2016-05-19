@@ -16,7 +16,12 @@
       ],
       env: {
         NODE_ENV: 'development',
-        PORT: 3000,
+        PORT: '3000',
+        DATABASE_USER: 'docker',
+        DATABASE_PASS: 'docker',
+        DATABASE_HOST: '192.168.99.100',
+        DATABASE_PORT: '5432',
+        DATABASE_NAME: 'docker',
       },
       stdout: false,
     }).on('restart', function () {
@@ -41,6 +46,11 @@
       vars: {
         NODE_ENV: 'test',
         PORT: 3001,
+        DATABASE_USER: 'docker',
+        DATABASE_PASS: 'docker',
+        DATABASE_HOST: '192.168.99.100',
+        DATABASE_PORT: '5432',
+        DATABASE_NAME: 'docker',
       },
     });
     return gulp.src('test/**/*.js')

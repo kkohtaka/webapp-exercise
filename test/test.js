@@ -32,6 +32,22 @@
     });
   });
 
+  describe('GET /api/messages/:messageId', function () {
+    it('should return 200 OK', function (done) {
+      var messageId = '42';
+      var message = {
+        text: 'Bye, Z Lab Web Application.',
+      };
+      agent.get('/api/messages/' + messageId)
+      .send(message)
+      .expect(200)
+      .end(function (err, res) {
+        should.not.exist(err);
+        done();
+      });
+    });
+  });
+
   describe('PUT /api/messages/:messageId', function () {
     it('should return 200 OK', function (done) {
       var messageId = '42';
