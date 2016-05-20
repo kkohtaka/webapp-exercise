@@ -1,10 +1,10 @@
-# Copyright 2016, Z Lab Corporation. All rights reserved.
+/** Copyright 2016, Z Lab Corporation. All rights reserved. */
 
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding-top: 80px;
 }
 
-a {
-  color: #00B7FF;
+.message-table {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
