@@ -7,18 +7,21 @@
   var env = require('gulp-env');
   var uglify = require('gulp-uglify');
   var sourcemaps = require('gulp-sourcemaps');
+  var livereload = require('gulp-livereload');
+  var notify = require('gulp-notify');
   var browserify = require('browserify');
   var source = require('vinyl-source-stream');
   var buffer = require('vinyl-buffer');
 
   gulp.task('serve', function () {
+    livereload.listen();
     nodemon({
       script: './bin/www',
       ext: 'js',
       ignore: [
-        'gulpfile.js',
-        'test/**/*.js',
-        'node_modules/**',
+        './gulpfile.js',
+        './test/**/*.js',
+        './node_modules/**',
       ],
       env: {
         NODE_ENV: 'development',
@@ -31,18 +34,20 @@
       },
       stdout: false,
     }).on('restart', function () {
-      console.log('Restarting...');
+      gulp.src('./bin/www')
+      .pipe(livereload())
+      .pipe(notify('Reloading page, please wait...'));
     });
   });
 
   gulp.task('watch', function () {
     gulp.watch(
       [
-        'app.js',
-        'routes/**/*.js',
-        'views/**/*.js',
-        'models/**/*.js',
-        'test/**/*.js',
+        './app.js',
+        './routes/**/*.js',
+        './views/**/*.js',
+        './models/**/*.js',
+        './test/**/*.js',
       ],
       ['mocha']
     );
@@ -60,7 +65,7 @@
         DATABASE_NAME: 'test',
       },
     });
-    return gulp.src('test/**/*.js')
+    return gulp.src('./test/**/*.js')
     .pipe(mocha({
       bail: false,
       reporter: 'spec',
