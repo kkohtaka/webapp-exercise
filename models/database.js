@@ -3,6 +3,7 @@
 (function () {
   var util = require('util');
   var pg = require('pg');
+  const bluebird = require('bluebird');
 
   var connectionString = util.format('postgres://%s:%s@%s:%s/%s',
       process.env.DATABASE_USER,
@@ -83,8 +84,35 @@
     });
   };
 
+  const insertTestDAta = function (done) {
+    bluebird.coroutine(function *() {
+      console.log('Generating test data...');
+      const client = new pg.Client(connectionString);
+      client.connect();
+
+      const insert = function (text) {
+        return new Promise(function (resolve, reject) {
+          const query = client.query('INSERT INTO messages (text, created, updated) VALUES ($1, $2, $3)',
+              [text, 'NOW()', 'NOW()']);
+          query.on('error', function (err) {
+            reject(err);
+          });
+          query.on('end', function (data) {
+            resolve(data);
+          });
+        });
+      };
+      for (let i = 0; i < 100; i++) {
+        yield insert('Test Message: ' + i);
+      }
+      console.log('Generated.');
+      done();
+    })();
+  };
+
   module.exports = {};
   module.exports.createMessagesTable = createMessagesTable;
   module.exports.deleteMessagesTable = deleteMessagesTable;
   module.exports.resetMessagesTable = resetMessagesTable;
+  module.exports.insertTestDAta = insertTestDAta;
 }());

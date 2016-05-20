@@ -12,6 +12,7 @@
       ext: 'js',
       ignore: [
         'gulpfile.js',
+        'test/**/*.js',
         'node_modules/**',
       ],
       env: {
@@ -21,7 +22,7 @@
         DATABASE_PASS: 'docker',
         DATABASE_HOST: '192.168.99.100',
         DATABASE_PORT: '5432',
-        DATABASE_NAME: 'docker',
+        DATABASE_NAME: 'development',
       },
       stdout: false,
     }).on('restart', function () {
@@ -35,6 +36,7 @@
         'app.js',
         'routes/**/*.js',
         'views/**/*.js',
+        'models/**/*.js',
         'test/**/*.js',
       ],
       ['mocha']
@@ -49,8 +51,8 @@
         DATABASE_USER: 'docker',
         DATABASE_PASS: 'docker',
         DATABASE_HOST: '192.168.99.100',
-        DATABASE_PORT: '5432',
-        DATABASE_NAME: 'docker',
+        DATABASE_PORT: '5433',
+        DATABASE_NAME: 'test',
       },
     });
     return gulp.src('test/**/*.js')

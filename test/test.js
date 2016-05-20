@@ -2,8 +2,19 @@
 
 (function () {
   var app = require('../app');
+  const database = require('../models/database');
   var agent = require('supertest').agent(app);
   var should = require('should');
+
+  beforeEach(function (done) {
+    database.resetMessagesTable(function () {
+      database.insertTestDAta(done);
+    });
+  });
+
+  after(function (done) {
+    database.resetMessagesTable(done);
+  });
 
   describe('POST /api/messages', function () {
     it('should return 200 OK', function (done) {
@@ -76,5 +87,4 @@
       });
     });
   });
-
 }());
