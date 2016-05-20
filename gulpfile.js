@@ -5,6 +5,11 @@
   var nodemon = require('gulp-nodemon');
   var mocha = require('gulp-mocha');
   var env = require('gulp-env');
+  var uglify = require('gulp-uglify');
+  var sourcemaps = require('gulp-sourcemaps');
+  var browserify = require('browserify');
+  var source = require('vinyl-source-stream');
+  var buffer = require('vinyl-buffer');
 
   gulp.task('serve', function () {
     nodemon({
@@ -62,5 +67,24 @@
     }));
   });
 
-  gulp.task('default', ['serve', 'mocha', 'watch']);
+  gulp.task('client-js', function () {
+    browserify({
+      entries: [
+        './node_modules/bootstrap/dist/js/npm.js',
+      ],
+      debug: true,
+    })
+    .bundle()
+    .pipe(source('bundle.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({
+      loadMaps: true,
+    }))
+    .pipe(uglify())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('./public/javascripts'));
+  });
+
+  gulp.task('client', ['client-js']);
+  gulp.task('default', ['client', 'serve', 'mocha', 'watch']);
 }());
