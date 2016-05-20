@@ -17,7 +17,7 @@
     livereload.listen();
     nodemon({
       script: './bin/www',
-      ext: 'js',
+      ext: 'js, jade',
       ignore: [
         './gulpfile.js',
         './test/**/*.js',
@@ -75,7 +75,7 @@
   gulp.task('client-js', function () {
     browserify({
       entries: [
-        './node_modules/bootstrap/dist/js/npm.js',
+        './client/javascripts/main.js',
       ],
       debug: true,
     })
@@ -90,6 +90,20 @@
     .pipe(gulp.dest('./public/javascripts'));
   });
 
-  gulp.task('client', ['client-js']);
+  gulp.task('client-css', function () {
+    gulp.src([
+      './node_modules/bootstrap/dist/css/**',
+    ])
+    .pipe(gulp.dest('./public/stylesheets'));
+  });
+
+  gulp.task('client-fonts', function () {
+    gulp.src([
+      './node_modules/bootstrap/dist/fonts/**',
+    ])
+    .pipe(gulp.dest('./public/fonts'));
+  });
+
+  gulp.task('client', ['client-js', 'client-css', 'client-fonts']);
   gulp.task('default', ['client', 'serve', 'mocha', 'watch']);
 }());
