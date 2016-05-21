@@ -8,7 +8,7 @@
 
   beforeEach(function (done) {
     database.resetMessagesTable(function () {
-      database.insertTestDAta(done);
+      database.insertTestData(done);
     });
   });
 

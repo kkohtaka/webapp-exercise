@@ -20,8 +20,9 @@
       ext: 'js, jade',
       ignore: [
         './gulpfile.js',
-        './test/**/*.js',
+        './test/**',
         './node_modules/**',
+        './client/**'
       ],
       env: {
         NODE_ENV: 'development',
@@ -50,6 +51,13 @@
         './test/**/*.js',
       ],
       ['mocha']
+    );
+
+    gulp.watch(
+      [
+        './client/javascripts/**/*.js',
+      ],
+      ['client-js']
     );
   });
 

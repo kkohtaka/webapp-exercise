@@ -29,7 +29,7 @@
       var messages = [];
 
       // TODO(kkohtaka): Implement paging.
-      var query = client.query('SELECT * FROM messages ORDER BY id ASC');
+      var query = client.query('SELECT * FROM messages ORDER BY id DESC');
       query.on('row', function (row) {
         messages.push(row);
       });

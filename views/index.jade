@@ -21,10 +21,10 @@ block content
               a(href='#') Contact
 
     .message-table.input-group
-      input.form-control(type='text')
+      input#message-text-input.form-control(type='text')
       .input-group-btn
-        button.btn.btn-default(type='button')
-          span Send
+        button#post-message-button.btn.btn-default(type='submit')
+          span Post
 
     table.table.table-stripped
       thead
@@ -32,15 +32,7 @@ block content
           th #
           th Text
           th Date
-      tbody
-        tr
-          td A
-          td B
-          td C
-        tr
-          td A
-          td B
-          td C
+      tbody#message-list-container
 
     footer.navbar.navbar-fixed-bottom
       .container-fluid
@@ -51,3 +43,9 @@ block content
           li.next
             a(href='#', aria-label='Next') Newer
               span(aria-hidden='true') &rarr;
+
+    script#message-item-template(type='text/x-handlebars-template')
+      tr.message-item
+        td.message-id {{mid}}
+        td.message-text {{text}}
+        td.message-cdate {{created}}

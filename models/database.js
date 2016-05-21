@@ -84,7 +84,7 @@
     });
   };
 
-  const insertTestDAta = function (done) {
+  const insertTestData = function (done) {
     bluebird.coroutine(function *() {
       console.log('Generating test data...');
       const client = new pg.Client(connectionString);
@@ -114,5 +114,5 @@
   module.exports.createMessagesTable = createMessagesTable;
   module.exports.deleteMessagesTable = deleteMessagesTable;
   module.exports.resetMessagesTable = resetMessagesTable;
-  module.exports.insertTestDAta = insertTestDAta;
+  module.exports.insertTestData = insertTestData;
 }());
