@@ -17,6 +17,8 @@ block content
               a(href='#') Home
             li
               a(href='https://github.com/zlabjp/zlab-webapp-practice') About
+          p.navbar-text.muted.pull-right
+            | Copyright &copy; 2016 Z Lab Corporation All Rights Reserved.
 
     .message-table.input-group
       input#message-text-input.form-control(type='text')
@@ -32,18 +34,8 @@ block content
           th Date
       tbody#message-list-container
 
-    footer.navbar.navbar-fixed-bottom
-      .container-fluid
-        ul.pager
-          li.previous
-            a(href='#', aria-label='Previous') Older
-              span(aria-hidden='true') &larr;
-          li.next
-            a(href='#', aria-label='Next') Newer
-              span(aria-hidden='true') &rarr;
-
-    script#message-item-template(type='text/x-handlebars-template')
-      tr.message-item
-        td.message-id {{mid}}
-        td.message-text {{text}}
-        td.message-cdate {{created}}
+  script#message-item-template(type='text/x-handlebars-template')
+    tr.message-item
+      td.message-id {{mid}}
+      td.message-text {{text}}
+      td.message-cdate {{created}}
