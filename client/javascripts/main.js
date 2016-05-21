@@ -1,15 +1,17 @@
 // Copyright 2016, Z Lab Corporation. All rights reserved.
 
-(function () {
-  $ = jQuery = require('jquery');
-  var bootstrap = require('bootstrap');
-  var handlebars = require('handlebars');
+$ = jQuery = require('jquery');
+const bootstrap = require('bootstrap');
+const handlebars = require('handlebars');
 
-  function clearMessages () {
+(() => {
+  'use strict';
+
+  const clearMessages = () => {
     $('#message-list-container').empty();
-  }
+  };
 
-  function refreshMessages () {
+  const refreshMessages = () => {
     clearMessages();
 
     $.ajax({
@@ -27,9 +29,9 @@
         messageListContainer.append(messageTemplate(messages[i]));
       }
     });
-  }
+  };
 
-  function postMessage(text) {
+  const postMessage = (text) => {
     $.ajax({
       method: 'POST',
       url: '/api/messages',
@@ -41,14 +43,16 @@
     }).done(function (data) {
       refreshMessages();
     });
-  }
+  };
 
-  $(document).ready(function () {
+  $(document).ready(() => {
     // Setup UI parts
     $('#post-message-button').on('click', function (ev) {
+      ev.preventDefault();
       postMessage($('#message-text-input').val());
+      $('#message-form')[0].reset();
     });
 
     refreshMessages();
   });
-}());
+})();

@@ -10,6 +10,7 @@
   var livereload = require('gulp-livereload');
   var notify = require('gulp-notify');
   var browserify = require('browserify');
+  var babelify = require('babelify');
   var source = require('vinyl-source-stream');
   var buffer = require('vinyl-buffer');
 
@@ -87,6 +88,7 @@
       ],
       debug: true,
     })
+    .transform(babelify)
     .bundle()
     .pipe(source('bundle.js'))
     // .pipe(buffer())

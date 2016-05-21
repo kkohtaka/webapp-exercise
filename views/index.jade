@@ -20,13 +20,13 @@ block content
           p.navbar-text.muted.pull-right
             | Copyright &copy; 2016 Z Lab Corporation All Rights Reserved.
 
-    .message-table.input-group
+    form#message-form.input-group
       input#message-text-input.form-control(type='text')
       .input-group-btn
         button#post-message-button.btn.btn-default(type='submit')
           span Post
 
-    table.table.table-stripped
+    table.message-table.table.table-stripped
       thead
         tr
           th #
