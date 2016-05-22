@@ -43,13 +43,13 @@
     });
   });
 
-  describe('GET /api/messages/:messageId', function () {
+  describe('GET /api/messages/:mid', function () {
     it('should return 200 OK', function (done) {
-      var messageId = '42';
+      var mid = '42';
       var message = {
         text: 'Bye, Z Lab Web Application.',
       };
-      agent.get('/api/messages/' + messageId)
+      agent.get('/api/messages/' + mid)
       .send(message)
       .expect(200)
       .end(function (err, res) {
@@ -59,13 +59,13 @@
     });
   });
 
-  describe('PUT /api/messages/:messageId', function () {
+  describe('PUT /api/messages/:mid', function () {
     it('should return 200 OK', function (done) {
-      var messageId = '42';
+      var mid = '42';
       var message = {
         text: 'Bye, Z Lab Web Application.',
       };
-      agent.put('/api/messages/' + messageId)
+      agent.put('/api/messages/' + mid)
       .send(message)
       .expect(200)
       .end(function (err, res) {
@@ -75,10 +75,10 @@
     });
   });
 
-  describe('POST /api/messages/:messageId', function () {
+  describe('POST /api/messages/:mid', function () {
     it('should return 200 OK', function (done) {
-      var messageId = '42';
-      agent.delete('/api/messages/' + messageId)
+      var mid = '42';
+      agent.delete('/api/messages/' + mid)
       .send()
       .expect(200)
       .end(function (err, res) {

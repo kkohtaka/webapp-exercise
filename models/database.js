@@ -14,7 +14,7 @@
 
   var createMessagesTable = function (done) {
     var scheme = {
-      id: 'SERIAL PRIMARY KEY',
+      mid: 'SERIAL PRIMARY KEY',
       text: 'VARCHAR(140) NOT NULL',
       created: 'TIMESTAMP',
       updated: 'TIMESTAMP',

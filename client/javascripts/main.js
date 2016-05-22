@@ -3,9 +3,16 @@
 $ = jQuery = require('jquery');
 const bootstrap = require('bootstrap');
 const handlebars = require('handlebars');
+const moment = require('moment');
 
 (() => {
   'use strict';
+
+  moment().locale('en');
+
+  const formatDate = (date) => {
+    return moment(date).format('ddd, MMM Do YYYY, hh:mm:ss');
+  };
 
   const clearMessages = () => {
     $('#message-list-container').empty();
@@ -26,6 +33,8 @@ const handlebars = require('handlebars');
       const messages = data.data || [];
       const len = messages.length;
       for (let i = 0; i < len; i++) {
+        const message = messages[i];
+        message.created = formatDate(message.created);
         messageListContainer.append(messageTemplate(messages[i]));
       }
     });

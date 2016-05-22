@@ -29,7 +29,7 @@
       var messages = [];
 
       // TODO(kkohtaka): Implement paging.
-      var query = client.query('SELECT * FROM messages ORDER BY id DESC');
+      var query = client.query('SELECT * FROM messages ORDER BY mid DESC');
       query.on('row', function (row) {
         messages.push(row);
       });
@@ -58,9 +58,9 @@
   });
 
   /* GET gets the message. */
-  router.get('/:messageId', function (req, res, next) {
+  router.get('/:mid', function (req, res, next) {
     // TODO(kkohtaka): Validate input data.
-    var messageId = req.params.messageId;
+    var mid = req.params.mid;
     pg.connect(connectionString, function (err, client, done) {
       if (err) {
         done();
@@ -72,8 +72,8 @@
       }
 
       // TODO(kkohtaka): Implement paging.
-      var query = client.query('SELECT * FROM messages WHERE id = $1',
-          [messageId]);
+      var query = client.query('SELECT * FROM messages WHERE mid = $1',
+          [mid]);
 
       var messages = [];
       query.on('row', function (row) {
@@ -151,9 +151,9 @@
   });
 
   /* PUT updates the message. */
-  router.put('/:messageId', function (req, res, next) {
+  router.put('/:mid', function (req, res, next) {
     // TODO(kkohtaka): Validate input data.
-    var messageId = req.params.messageId;
+    var mid = req.params.mid;
     var message = req.body;
     pg.connect(connectionString, function (err, client, done) {
       if (err) {
@@ -167,7 +167,7 @@
 
       var query = client.query(
           'UPDATE messages SET (text, updated) = ($1, $2) WHERE id = $3 RETURNING *',
-          [message.text, 'NOW()', messageId]);
+          [message.text, 'NOW()', mid]);
 
       var messages = [];
       query.on('row', function (row) {
@@ -199,9 +199,9 @@
   });
 
   /* DELETE removes the message. */
-  router.delete('/:messageId', function (req, res, next) {
+  router.delete('/:mid', function (req, res, next) {
     // TODO(kkohtaka): Validate input data.
-    var messageId = req.params.messageId;
+    var mid = req.params.mid;
     pg.connect(connectionString, function (err, client, done) {
       if (err) {
         done();
@@ -212,7 +212,7 @@
         });
       }
 
-      var query = client.query('DELETE FROM messages WHERE id = $1', [messageId]);
+      var query = client.query('DELETE FROM messages WHERE mid = $1', [mid]);
 
       var messages = [];
       query.on('row', function (row) {
