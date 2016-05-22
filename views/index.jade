@@ -28,14 +28,14 @@ block content
 
     table.message-table.table.table-stripped
       thead
-        tr
-          th #
-          th Text
-          th Date
+        tr.row
+          th.col-xs-2.col-lg-1 #
+          th.col-xs-6.col-lg-9 Text
+          th.col-xs-4.col-lg-2 Date
       tbody#message-list-container
 
   script#message-item-template(type='text/x-handlebars-template')
-    tr.message-item
-      td.message-id {{mid}}
-      td.message-text {{text}}
-      td.message-cdate {{created}}
+    tr.row.message-item
+      td.col-xs-2.col-lg-1.message-id {{mid}}
+      td.col-xs-6.col-lg-9.message-text {{text}}
+      td.col-xs-4.col-lg-2.message-cdate {{created}}
