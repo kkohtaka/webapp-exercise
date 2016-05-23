@@ -1,6 +1,7 @@
 // Copyright 2016, Z Lab Corporation. All rights reserved.
 
 $ = jQuery = require('jquery');
+require('waypoints/lib/jquery.waypoints');
 const bootstrap = require('bootstrap');
 const handlebars = require('handlebars');
 const moment = require('moment');
@@ -9,6 +10,8 @@ const moment = require('moment');
   'use strict';
 
   moment().locale('en');
+
+  let messageLength = 0;
 
   const formatDate = (date) => {
     return moment(date).format('ddd, MMM Do YYYY, hh:mm:ss');
@@ -58,22 +61,33 @@ const moment = require('moment');
     messageInput.focus();
   };
 
+  const messageListContainer = $('#message-list-container');
   const clearMessages = () => {
     console.log('clearMessages');
-    $('#message-list-container').empty();
+    messageListContainer.empty();
+    messageLength = 0;
+  };
+  const appendMessage = (messageItem) => {
+    console.log('appendMessage');
+    messageListContainer.append(messageItem);
+    messageLength++;
   };
 
-  const refreshMessages = () => {
-    console.log('refreshMessages');
-    clearMessages();
-
+  let loading = false;
+  const loadMoreMessages = () => {
+    console.log('loadMoreMessages');
+    if (loading) {
+      console.log('loadMoreMessages was called while loading');
+      return;
+    }
+    loading = true;
     $.ajax({
       method: 'GET',
-      url: '/api/messages'
+      url: '/api/messages?offset=' + messageLength,
     }).error(function (err) {
       console.error('error: ', err);
+      loading = false;
     }).done(function (data) {
-      const messageListContainer = $('#message-list-container');
       const messageTemplate = handlebars.compile(
           $('#message-item-template').html());
       const messages = data.data || [];
@@ -90,9 +104,24 @@ const moment = require('moment');
           console.log('click');
           makeMessageEditable(messageText);
         });
-        messageListContainer.append(messageItem);
+        appendMessage(messageItem);
       }
+      loading = false;
     });
+  };
+  const waypoints = new Waypoint({
+    element: messageListContainer[0],
+    handler: (direction) => {
+      if (direction === 'down') {
+        loadMoreMessages();
+      }
+    },
+  });
+
+  const refreshMessages = () => {
+    console.log('refreshMessages');
+    clearMessages();
+    loadMoreMessages();
   };
 
   const postMessage = (text) => {

@@ -31,18 +31,19 @@ block content
         tr.row
           th.col-xs-2.col-lg-1.message-id
             .form-control #
-          th.col-xs-6.col-lg-9.message-text
+          th.col-xs-6.col-lg-8.message-text
             .form-control Text
-          th.col-xs-4.col-lg-2.message-cdate
+          th.col-xs-4.col-lg-3.message-cdate
             .form-control Date
-      tbody#message-list-container
+      tbody#message-list-container.infinite-container
+    //- a.infinite-more-link(href='#') More
 
   script#message-item-template(type='text/x-handlebars-template')
-    tr.row.message-item
+    tr.row.message-item.infinite-item
       td.col-xs-2.col-lg-1.message-id
         .form-control {{mid}}
-      td.col-xs-6.col-lg-9.message-text
-      td.col-xs-4.col-lg-2.message-cdate
+      td.col-xs-6.col-lg-8.message-text
+      td.col-xs-4.col-lg-3.message-cdate
         .form-control {{created}}
 
   script#message-text-template(type='text/x-handlebars-template')

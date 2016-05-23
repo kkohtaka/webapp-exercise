@@ -16,6 +16,10 @@
 
   /* GET lists messages. */
   router.get('/', function (req, res, next) {
+    const offset = req.query.offset || 0;
+    const amount = req.query.amount || 20;
+    console.log('offset: ', offset);
+    console.log('amount: ', amount);
     pg.connect(connectionString, function (err, client, done) {
       if (err) {
         done();
@@ -29,7 +33,8 @@
       var messages = [];
 
       // TODO(kkohtaka): Implement paging.
-      var query = client.query('SELECT * FROM messages ORDER BY mid DESC');
+      var query = client.query('SELECT * FROM messages ORDER BY mid DESC LIMIT $1 OFFSET $2',
+          [amount, offset]);
       query.on('row', function (row) {
         messages.push(row);
       });

@@ -41,6 +41,35 @@
         done();
       });
     });
+
+    it('should return 20 elements', (done) => {
+      agent.get('/api/messages')
+      .send()
+      .expect(200)
+      .end(function (err, res) {
+        should.not.exist(err);
+        res.body.data.should.be.Array();
+        res.body.data.should.have.length(20);
+        done();
+      });
+    });
+
+    it('should return 5 elements between index [42, 46]', (done) => {
+      agent.get('/api/messages?offset=42&amount=5')
+      .send()
+      .expect(200)
+      .end(function (err, res) {
+        should.not.exist(err);
+        res.body.data.should.be.Array();
+        res.body.data.should.have.length(5);
+        let index = res.body.data[0].mid;
+        for (let i = 1; i < 5; i++) {
+          res.body.data[i].mid.should.be.below(index);
+          index = res.body.data[i].mid;
+        }
+        done();
+      });
+    });
   });
 
   describe('GET /api/messages/:mid', function () {
