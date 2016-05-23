@@ -23,6 +23,7 @@
     "browserify": "^13.0.1",
     "gulp": "^3.9.1",
     "gulp-env": "^0.4.0",
+    "gulp-exit": "0.0.2",
     "gulp-livereload": "^3.8.1",
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.7",

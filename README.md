@@ -1,5 +1,7 @@
 # Web Application Exercise
 
+[![Build Status](https://travis-ci.org/kkohtaka/webapp-exercise.svg?branch=master)](https://travis-ci.org/kkohtaka/webapp-exercise)
+
 This is an exercise for Z Lab's newbies to learn developing a web application.
 
 ## Requirements to Run the Application
@@ -22,9 +24,9 @@ $> npm install --global gulp-cli
 Use Docker to host PostgreSQL server locally.
 
 ```bash
-$> docker pull orchardup/postgresql
-$> docker run --rm -p 5432:5432 -e POSTGRESQL_DB=development orchardup/postgresql
-$> docker run --rm -p 5433:5432 -e POSTGRESQL_DB=test orchardup/postgresql
+$> docker pull postgres
+$> docker run --rm -p 5433:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD= -e POSTGRES_DB=development postgres
+$> docker run --rm -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD= -e POSTGRES_DB=test postgres
 ```
 
 ## License

@@ -1,10 +1,10 @@
 #!/bin/bash
 # Copyright 2016, Z Lab Corporation. All rights reserved.
 
-export DATABASE_USER=docker
-export DATABASE_PASS=docker
-export DATABASE_HOST=192.168.99.100
-export DATABASE_PORT=5432
+export DATABASE_USER=postgres
+export DATABASE_PASS=
+export DATABASE_HOST=localhost
+export DATABASE_PORT=5433
 export DATABASE_NAME=development
 
 # NOTE: http://stackoverflow.com/questions/4774054/reliable-way-for-a-bash-script-to-get-the-full-path-to-itself

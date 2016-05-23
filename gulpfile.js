@@ -9,11 +9,32 @@
   var sourcemaps = require('gulp-sourcemaps');
   var livereload = require('gulp-livereload');
   var notify = require('gulp-notify');
+  var exit = require('gulp-exit');
   var browserify = require('browserify');
   var babelify = require('babelify');
   var source = require('vinyl-source-stream');
   var buffer = require('vinyl-buffer');
 
+  var environments = {
+    test: {
+      NODE_ENV: 'test',
+      PORT: 3001,
+      DATABASE_USER: 'postgres',
+      DATABASE_PASS: '',
+      DATABASE_HOST: 'localhost',
+      DATABASE_PORT: '5432',
+      DATABASE_NAME: 'test',
+    },
+    development: {
+      NODE_ENV: 'development',
+      PORT: 3000,
+      DATABASE_USER: 'postgres',
+      DATABASE_PASS: '',
+      DATABASE_HOST: 'localhost',
+      DATABASE_PORT: '5433',
+      DATABASE_NAME: 'development',
+    }
+  }
   gulp.task('serve', function () {
     livereload.listen();
     nodemon({
@@ -25,15 +46,7 @@
         './node_modules/**',
         './client/**'
       ],
-      env: {
-        NODE_ENV: 'development',
-        PORT: '3000',
-        DATABASE_USER: 'docker',
-        DATABASE_PASS: 'docker',
-        DATABASE_HOST: '192.168.99.100',
-        DATABASE_PORT: '5432',
-        DATABASE_NAME: 'development',
-      },
+      env: environments.development,
       stdout: false,
     }).on('restart', function () {
       gulp.src('./bin/www')
@@ -64,21 +77,25 @@
 
   gulp.task('mocha', function () {
     env({
-      vars: {
-        NODE_ENV: 'test',
-        PORT: 3001,
-        DATABASE_USER: 'docker',
-        DATABASE_PASS: 'docker',
-        DATABASE_HOST: '192.168.99.100',
-        DATABASE_PORT: '5433',
-        DATABASE_NAME: 'test',
-      },
+      vars: environments.test,
     });
     return gulp.src('./test/**/*.js')
     .pipe(mocha({
       bail: false,
       reporter: 'spec',
     }));
+  });
+
+  gulp.task('test', function () {
+    env({
+      vars: environments.test,
+    });
+    return gulp.src('./test/**/*.js')
+    .pipe(mocha({
+      bail: false,
+      reporter: 'spec',
+    }))
+    .pipe(exit());
   });
 
   gulp.task('client-js', function () {
