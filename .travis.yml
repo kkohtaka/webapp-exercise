@@ -7,3 +7,8 @@ services:
 before_script:
   - psql -c 'create database test;' -U postgres
 script: gulp test
+deploy:
+  provider: heroku
+  api_key:
+    secure: iFFKdaFk5irOpQdVjMuh7k5+FRGo/Fr+RbNz3dWn/SxRO9s93CXPmM/XNdv55U2IOoV99AFSR00Fm+5aGSotB+YB0xtwoXXJE/Kl4ROOQJgxWSXNTeZ64u/QEyj/gvxb0hoSiW5sDCTRAB/VoOVVu3PEYgQwL/w6v2jC4h9H67c79PBvGi5PqASmtgH+bBTvpZyZj6tpvhO9wxiqMYvt94F1qyB1TYZDGuUD5cDSsvyQZ73wTjI0OfdGi3HGOrfAoJ58Np5/uD9B52flmD0rClEJtbUp9BrVRrs4w1XtFjzI2Gl4nDx+A9z5fboW3s3r8HVZozXodzE8GsHDsCmh+VEmwhJMCsi4S074nuQqSWnSeuH4YMElDOH6rGtrYiW6rU/wP4F4KQ8QdK8ubYd7oKNOyU1tWfDt3Pl++oz90wh68jMYaTiSc+9cklJl4CVCi4/NaZvhjKGOGejQzB7SxySkYXiMUlkbG0okeT9nG5mnnW2SYxa5m/agtVMqH45nSMRJsTxwDuKxCXLue3O0R064OvKbMUXyr6IoOS0oU9l4/Z/g4Rkk2MSFlsZpjIz5hI27J6LJP3d7/yt19v/NZq2baU/DQS71JiYT94pK4qX1xB2NpPxO/c8aR8Ed8KBo6klbXu4je/USbK4h435RCtLINKMmd2/ri5td1MGCYKc=
+  app: webapp-exercise
