@@ -8,3 +8,27 @@ body {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+.message-id > .form-control {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.message-text > .form-control {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.message-cdate > .form-control {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.message-update-form.inactive .message-update-text-input {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.message-update-form.inactive .message-update-button {
+  visibility: hidden;
+}

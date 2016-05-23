@@ -29,13 +29,34 @@ block content
     table.message-table.table.table-stripped
       thead
         tr.row
-          th.col-xs-2.col-lg-1 #
-          th.col-xs-6.col-lg-9 Text
-          th.col-xs-4.col-lg-2 Date
+          th.col-xs-2.col-lg-1.message-id
+            .form-control #
+          th.col-xs-6.col-lg-9.message-text
+            .form-control Text
+          th.col-xs-4.col-lg-2.message-cdate
+            .form-control Date
       tbody#message-list-container
 
   script#message-item-template(type='text/x-handlebars-template')
     tr.row.message-item
-      td.col-xs-2.col-lg-1.message-id {{mid}}
-      td.col-xs-6.col-lg-9.message-text {{text}}
-      td.col-xs-4.col-lg-2.message-cdate {{created}}
+      td.col-xs-2.col-lg-1.message-id
+        .form-control {{mid}}
+      td.col-xs-6.col-lg-9.message-text
+      td.col-xs-4.col-lg-2.message-cdate
+        .form-control {{created}}
+
+  script#message-text-template(type='text/x-handlebars-template')
+    .message-update-form.input-group.inactive
+      input.message-update-text-input.form-control(type='text', value='{{text}}')
+      input.message-update-id-input(type='hidden', value='{{mid}}')
+      .input-group-btn
+        .message-update-button.btn.btn-default
+          span Update
+
+  script#message-update-form-template(type='text/x-handlebars-template')
+    form.message-update-form.input-group
+      input.message-update-text-input.form-control(type='text' value='{{text}}')
+      input.message-update-id-input(type='hidden', value='{{mid}}')
+      .input-group-btn
+        button.message-update-button.btn.btn-default(type='submit')
+          span Update

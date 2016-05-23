@@ -1,8 +1,8 @@
-# Learn to Develop a Web Application
+# Web Application Exercise
 
-This is a practice for Z Lab's newbies to learn developing a web application.
+This is an exercise for Z Lab's newbies to learn developing a web application.
 
-## Requirements
+## Requirements to Run the Application
 
 - [Node.js & NPM](https://nodejs.org/)
 - [PostgreSQL](http://www.postgresql.org/)

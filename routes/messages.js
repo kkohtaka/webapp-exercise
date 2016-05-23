@@ -166,7 +166,7 @@
       }
 
       var query = client.query(
-          'UPDATE messages SET (text, updated) = ($1, $2) WHERE id = $3 RETURNING *',
+          'UPDATE messages SET (text, updated) = ($1, $2) WHERE mid = $3 RETURNING *',
           [message.text, 'NOW()', mid]);
 
       var messages = [];
