@@ -36,6 +36,7 @@
     "moment": "^2.13.0",
     "should": "^8.3.2",
     "supertest": "^1.2.0",
+    "to-iso-string": "0.0.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "waypoints": "^4.0.0"
