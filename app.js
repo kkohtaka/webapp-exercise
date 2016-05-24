@@ -11,6 +11,50 @@ var messages = require('./routes/messages');
 
 var app = express();
 
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+// Use the GoogleStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a token, tokenSecret, and Google profile), and
+//   invoke a callback with a user object.
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CONSUMER_KEY,
+  clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
+  callbackURL: process.env.GOOGLE_OAUTH_CALLBACK_URL,
+  passReqToCallback: true,
+}, function (token, tokenSecret, profile, done) {
+  console.log('token:', token);
+  console.log('tokenSecret:', tokenSecret);
+  console.log('profile:', profile);
+  User.findOrCreate({
+    googleId: profile.id,
+    email: profile.emails.read,
+  }, function (err, user) {
+    return done(err, user);
+  });
+}));
+
+// GET /auth/google
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  The first step in Google authentication will involve
+//   redirecting the user to google.com.  After authorization, Google
+//   will redirect the user back to this application at /auth/google/callback
+app.get('/auth/google', passport.authenticate('google', {
+  scope: ['https://www.googleapis.com/auth/plus.login'],
+}));
+
+// GET /auth/google/callback
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+app.get('/auth/google/callback', passport.authenticate('google', {
+  failureRedirect: '/login',
+}), function(req, res) {
+  res.redirect('/');
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

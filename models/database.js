@@ -12,79 +12,128 @@
       process.env.DATABASE_PORT,
       process.env.DATABASE_NAME);
 
-  var createMessagesTable = function (done) {
-    var scheme = {
+  const schemes = {
+    messages: {
       mid: 'SERIAL PRIMARY KEY',
       text: 'VARCHAR(140) NOT NULL',
       created: 'TIMESTAMP',
       updated: 'TIMESTAMP',
-    };
-    var schemeString = Object.keys(scheme).map(function (key, index) {
-      return key + ' ' + scheme[key];
-    }).join(', ');
-
-    var client = new pg.Client(connectionString);
-    client.connect();
-    var sql = util.format('CREATE TABLE IF NOT EXISTS messages(%s)', schemeString);
-
-    console.log('Creating table...');
-    var query = client.query(sql);
-
-    query.on('error', function (err) {
-      console.error('Failed to create.', err);
-      client.end();
-      if (done) done(err);
-    });
-
-    query.on('end', function () {
-      console.log('Created.');
-      client.end();
-      if (done) done(null);
-    });
+    },
+    users: {
+      gid: 'VARCHAR(30) PRIMARY KEY',
+      name: 'VARCHAR(256)',
+      email: 'VARCHAR(256)',
+    },
   };
 
-  var deleteMessagesTable = function (done) {
-    var client = new pg.Client(connectionString);
-    client.connect();
-    var sql = util.format('DROP TABLE IF EXISTS messages');
+  const tableCreater = (name) => {
+    const scheme = schemes[name];
+    return (done) => {
+      var schemeString = Object.keys(scheme).map(function (key, index) {
+        return key + ' ' + scheme[key];
+      }).join(', ');
 
-    console.log('Dropping table...');
-    var query = client.query(sql);
+      var client = new pg.Client(connectionString);
+      client.connect();
 
-    query.on('error', function (err) {
-      console.error('Failed to drop.', err);
-      client.end();
-      if (done) done(err);
-    });
+      console.log(name, ': Creating table...');
+      var query = client.query(util.format(
+        'CREATE TABLE IF NOT EXISTS %s(%s)',
+        name, schemeString));
 
-    query.on('end', function () {
-      console.log('Dropped.');
-      client.end();
-      if (done) done();
-    });
-  };
-
-  var resetMessagesTable = function (done) {
-    console.log('Resetting table...');
-    deleteMessagesTable(function (err) {
-      if (err) {
-        console.log('Failed to reset.');
+      query.on('error', function (err) {
+        console.error(name, ': Failed to create.', err);
+        client.end();
         if (done) done(err);
-      } else {
-        createMessagesTable(function (err) {
-          if (err) {
-            console.log('Failed to reset.');
-          } else {
-            console.log('Reset.');
-          }
+      });
 
+      query.on('end', function () {
+        console.log(name, ': Created.');
+        client.end();
+        if (done) done(null);
+      });
+    };
+  };
+
+  const tableDeleter = (name) => {
+    return (done) => {
+      var client = new pg.Client(connectionString);
+      client.connect();
+
+      console.log(name, ': Dropping table...');
+      var query = client.query(util.format('DROP TABLE IF EXISTS %s',
+        name));
+
+      query.on('error', function (err) {
+        console.error(name, ': Failed to drop.', err);
+        client.end();
+        if (done) done(err);
+      });
+
+      query.on('end', function () {
+        console.log(name, ': Dropped.');
+        client.end();
+        if (done) done();
+      });
+    };
+  };
+
+  const tableReseter = (name) => {
+    return (done) => {
+      console.log(name, ': Resetting table...');
+      tableDeleter(name)((err) => {
+        if (err) {
+          console.log(name, ': Failed to reset.');
           if (done) done(err);
-        });
-      }
+        } else {
+          tableCreater(name)((err) => {
+            if (err) {
+              console.log(name, ': Failed to reset.');
+            } else {
+              console.log(name, ': Reset.');
+            }
+            if (done) done(err);
+          });
+        }
+      });
+    };
+  };
+
+  const createMessagesTable = (done) => {
+    tableCreater('messages')(done);
+  };
+
+  const createUsersTable = (done) => {
+    tableCreater('users')(done);
+  };
+
+  const deleteMessagesTable = (done) => {
+    tableDeleter('messages')(done);
+  };
+
+  const deleteUsersTable = (done) => {
+    tableDeleter('users')(done);
+  };
+
+  const createTables = (done) => {
+    createUsersTable(() => {
+      createMessagesTable(done);
     });
   };
 
-  const insertTestData = function (done) {
+  const deleteTables = (done) => {
+    deleteMessagesTable(() => {
+      deleteUsersTable(done);
+    });
+  };
+
+  const resetTables = (done) => {
+    deleteTables(() => {
+      createTables(done);
+    })
+  };
+
+  const insertTestData = (done) => {
     bluebird.coroutine(function *() {
       console.log('Generating test data...');
       const client = new pg.Client(connectionString);
@@ -111,8 +160,8 @@
   };
 
   module.exports = {};
-  module.exports.createMessagesTable = createMessagesTable;
-  module.exports.deleteMessagesTable = deleteMessagesTable;
-  module.exports.resetMessagesTable = resetMessagesTable;
+  module.exports.createTables = createTables;
+  module.exports.deleteTables = deleteTables;
+  module.exports.resetTables = resetTables;
   module.exports.insertTestData = insertTestData;
 }());

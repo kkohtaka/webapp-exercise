@@ -21,7 +21,7 @@
       PORT: 3001,
       DATABASE_USER: 'postgres',
       DATABASE_PASS: '',
-      DATABASE_HOST: 'localhost',
+      DATABASE_HOST: '192.168.99.100',
       DATABASE_PORT: '5432',
       DATABASE_NAME: 'test',
     },
@@ -30,9 +30,12 @@
       PORT: 3000,
       DATABASE_USER: 'postgres',
       DATABASE_PASS: '',
-      DATABASE_HOST: 'localhost',
+      DATABASE_HOST: '192.168.99.100',
       DATABASE_PORT: '5433',
       DATABASE_NAME: 'development',
+      GOOGLE_CONSUMER_KEY: '206888294905-qvs2m4oudqq7k5cpac4vc6lf1racaffh.apps.googleusercontent.com',
+      GOOGLE_CONSUMER_SECRET: 'avGpzlPDF-vcLhhl4AB4c68w',
+      GOOGLE_OAUTH_CALLBACK_URL: 'http://localhost:3000/auth/google/callback'
     }
   }
   gulp.task('serve', function () {
