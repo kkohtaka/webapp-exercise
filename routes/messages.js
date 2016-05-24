@@ -1,19 +1,20 @@
 // Copyright 2016, Z Lab Corporation. All rights reserved.
 
-(function () {
-  var express = require('express');
+(() => {
+  'use strict';
+
+  const express = require('express');
   const passport = require('passport');
-  var app = express();
-  var router = express.Router();
-  var pg = require('pg');
+  const bluebird = require('bluebird');
+  const app = express();
+  const router = express.Router();
+
+  const User = require('../models/user');
+  const Message = require('../models/message');
 
   const ensureAuthenticated = (req, res, next) => {
     if ((app.get('env') === 'test')) {
-      req.user = {
-        id: '0',
-        name: 'user0',
-        email: 'user0@gmail.com',
-      };
+      req.user = {id: '0'};
       return next();
     }
     if (req.isAuthenticated()) {
@@ -24,251 +25,113 @@
     });
   };
 
-  var util = require('util');
-
-  var connectionString = util.format('postgres://%s:%s@%s:%s/%s',
-      process.env.DATABASE_USER,
-      process.env.DATABASE_PASS,
-      process.env.DATABASE_HOST,
-      process.env.DATABASE_PORT,
-      process.env.DATABASE_NAME);
-
   /* GET lists messages. */
-  router.get('/', function (req, res, next) {
+  router.get('/', (req, res, next) => {
     const offset = req.query.offset || 0;
     const amount = req.query.amount || 20;
-    pg.connect(connectionString, function (err, client, done) {
+    Message.get(offset, amount, (err, messages) => {
       if (err) {
-        done();
-
         // TODO(kkohtaka): Design response format.
         return res.status(500).json({
           success: false,
         });
       }
-
-      var messages = [];
-
-      // TODO(kkohtaka): Implement paging.
-      var query = client.query(
-          'SELECT * FROM messages INNER JOIN users ON messages.uid = users.id ORDER BY mid DESC LIMIT $1 OFFSET $2',
-          [amount, offset]);
-      query.on('row', function (row) {
-        messages.push(row);
-      });
-
-      query.on('error', function (err) {
-        // TODO(kkohtaka): Check the reason why the error occurred.
-        console.error(err);
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.status(500).json({
-          success: false,
-        });
-      });
-
-      query.on('end', function (result) {
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.json({
-          success: true,
-          data: messages,
-        });
+      // TODO(kkohtaka): Design response format.
+      return res.json({
+        success: true,
+        data: messages,
       });
     });
   });
 
   /* GET gets the message. */
-  router.get('/:mid', function (req, res, next) {
+  router.get('/:mid', (req, res, next) => {
     // TODO(kkohtaka): Validate input data.
-    var mid = req.params.mid;
-    pg.connect(connectionString, function (err, client, done) {
+    const mid = req.params.mid;
+    Message.findById(mid, (err, message) => {
       if (err) {
-        done();
-
         // TODO(kkohtaka): Design response format.
         return res.status(500).json({
           success: false,
         });
       }
-
-      // TODO(kkohtaka): Implement paging.
-      var query = client.query(
-          'SELECT * FROM messages INNER JOIN users ON messages.uid = users.id WHERE mid = $1',
-          [mid]);
-
-      var messages = [];
-      query.on('row', function (row) {
-        messages.push(row);
-      });
-
-      query.on('error', function (err) {
-        // TODO(kkohtaka): Check the reason why the error occurred.
-        console.error(err);
-        done();
-
+      if (message) {
         // TODO(kkohtaka): Design response format.
-        return res.status(500).json({
-          success: false,
-        });
-      });
-
-      query.on('end', function (result) {
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.status(messages.length > 0 ? 200 : 404).json({
+        return res.json({
           success: true,
-          data: messages,
+          data: message,
         });
+      }
+      return res.status(404).json({
+        success: true,
       });
     });
   });
 
   /* POST creates a message. */
-  router.post('/', ensureAuthenticated, function (req, res, next) {
+  router.post('/', ensureAuthenticated, (req, res, next) => {
     // TODO(kkohtaka): Validate input data.
     const message = req.body;
     const user = req.user;
-    pg.connect(connectionString, function (err, client, done) {
+    Message.create(user.id, message.text, (err, message) => {
       if (err) {
-        done();
-
         // TODO(kkohtaka): Design response format.
         return res.status(500).json({
           success: false,
         });
       }
-
-      var query = client.query(
-          'INSERT INTO messages (uid, text, created, updated) VALUES ($1, $2, $3, $4) RETURNING *',
-          [user.id, message.text, 'NOW()', 'NOW()']);
-
-      var messages = [];
-      query.on('row', function (row) {
-        messages.push(row);
-      });
-
-      query.on('error', function (err) {
-        // TODO(kkohtaka): Check the reason why the error occurred.
-        console.error(err);
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.json({
-          success: false,
-          data: messages,
-        });
-      });
-
-      query.on('end', function (result) {
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.json({
-          success: true,
-          data: messages,
-        });
+      // TODO(kkohtaka): Design response format.
+      return res.json({
+        success: true,
+        data: message,
       });
     });
   });
 
   /* PUT updates the message. */
-  router.put('/:mid', ensureAuthenticated, function (req, res, next) {
+  router.put('/:mid', ensureAuthenticated, (req, res, next) => {
     // TODO(kkohtaka): Validate input data.
-    var mid = req.params.mid;
-    var message = req.body;
-    pg.connect(connectionString, function (err, client, done) {
+    const mid = req.params.mid;
+    const message = req.body;
+    Message.update(mid, message.text, (err, message) => {
       if (err) {
-        done();
-
         // TODO(kkohtaka): Design response format.
         return res.status(500).json({
           success: false,
         });
       }
-
-      var query = client.query(
-          'UPDATE messages SET (text, updated) = ($1, $2) WHERE mid = $3 RETURNING *',
-          [message.text, 'NOW()', mid]);
-
-      var messages = [];
-      query.on('row', function (row) {
-        messages.push(row);
-      });
-
-      query.on('error', function (err) {
-        // TODO(kkohtaka): Check the reason why the error occurred.
-        console.error(err);
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.json({
-          success: false,
-          data: messages,
-        });
-      });
-
-      query.on('end', function (result) {
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.status(result.rowCount > 0 ? 200 : 404).json({
-          success: true,
-          data: messages,
-        });
+      // TODO(kkohtaka): Design response format.
+      return res.json({
+        success: true,
+        data: message,
       });
     });
   });
 
   /* DELETE removes the message. */
-  router.delete('/:mid', ensureAuthenticated, function (req, res, next) {
+  router.delete('/:mid', ensureAuthenticated, (req, res, next) => {
     // TODO(kkohtaka): Validate input data.
-    var mid = req.params.mid;
-    pg.connect(connectionString, function (err, client, done) {
+    const mid = req.params.mid;
+    Message.delete(mid, (err, message) => {
       if (err) {
-        done();
-
         // TODO(kkohtaka): Design response format.
         return res.status(500).json({
           success: false,
         });
       }
-
-      var query = client.query(
-          'DELETE FROM messages WHERE mid = $1',
-          [mid]);
-
-      var messages = [];
-      query.on('row', function (row) {
-        messages.push(row);
-      });
-
-      query.on('error', function (err) {
-        // TODO(kkohtaka): Check the reason why the error occurred.
-        console.error(err);
-        done();
-
+      if (message) {
         // TODO(kkohtaka): Design response format.
         return res.json({
-          success: false,
-          data: messages,
-        });
-      });
-
-      query.on('end', function (result) {
-        done();
-
-        // TODO(kkohtaka): Design response format.
-        return res.status(result.rowCount > 0 ? 200 : 404).json({
           success: true,
-          data: messages,
+          data: message,
         });
+      }
+      // TODO(kkohtaka): Design response format.
+      return res.status(404).json({
+        success: true,
       });
     });
   });
 
   module.exports = router;
-}());
+})();

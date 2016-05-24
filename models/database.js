@@ -1,16 +1,36 @@
 // Copyright 2016, Z Lab Corporation. All rights reserved.
 
-(function () {
-  var util = require('util');
-  var pg = require('pg');
+(() => {
+  'use strict';
+
+  const util = require('util');
+  const pg = require('pg');
   const bluebird = require('bluebird');
 
-  var connectionString = util.format('postgres://%s:%s@%s:%s/%s',
+  const connectionString = util.format('postgres://%s:%s@%s:%s/%s',
       process.env.DATABASE_USER,
       process.env.DATABASE_PASS,
       process.env.DATABASE_HOST,
       process.env.DATABASE_PORT,
       process.env.DATABASE_NAME);
+
+  const makeQuery = (sql, args) => {
+    return new Promise((resolve, reject) => {
+      const client = new pg.Client(connectionString);
+      client.connect();
+      const query = client.query(sql, args);
+      let users = [];
+      query.on('row', function (row) {
+        users.push(row);
+      });
+      query.on('error', function (err) {
+        reject(err);
+      });
+      query.on('end', function (data) {
+        resolve(users);
+      });
+    });
+  };
 
   const schemes = {
     users: {
@@ -30,25 +50,23 @@
   const tableCreater = (name) => {
     const scheme = schemes[name];
     return (done) => {
-      var schemeString = Object.keys(scheme).map(function (key, index) {
+      const schemeString = Object.keys(scheme).map((key, index) => {
         return key + ' ' + scheme[key];
       }).join(', ');
 
-      var client = new pg.Client(connectionString);
+      const client = new pg.Client(connectionString);
       client.connect();
 
       console.log(name, ': Creating table...');
-      var query = client.query(util.format(
+      const query = client.query(util.format(
         'CREATE TABLE IF NOT EXISTS %s(%s)',
         name, schemeString));
-
-      query.on('error', function (err) {
+      query.on('error', (err) => {
         console.error(name, ': Failed to create.', err);
         client.end();
         if (done) done(err);
       });
-
-      query.on('end', function () {
+      query.on('end', () => {
         console.log(name, ': Created.');
         client.end();
         if (done) done(null);
@@ -58,20 +76,18 @@
 
   const tableDeleter = (name) => {
     return (done) => {
-      var client = new pg.Client(connectionString);
+      const client = new pg.Client(connectionString);
       client.connect();
 
       console.log(name, ': Dropping table...');
-      var query = client.query(util.format('DROP TABLE IF EXISTS %s',
+      const query = client.query(util.format('DROP TABLE IF EXISTS %s',
         name));
-
-      query.on('error', function (err) {
+      query.on('error', (err) => {
         console.error(name, ': Failed to drop.', err);
         client.end();
         if (done) done(err);
       });
-
-      query.on('end', function () {
+      query.on('end', () => {
         console.log(name, ': Dropped.');
         client.end();
         if (done) done();
@@ -145,23 +161,23 @@
           const query = client.query(
               'INSERT INTO users (id, name, email) VALUES ($1, $2, $3)',
               [id, name, email]);
-          query.on('error', function (err) {
+          query.on('error', (err) => {
             reject(err);
           });
-          query.on('end', function (data) {
+          query.on('end', (data) => {
             resolve(data);
           });
         });
       };
-      const insertMessages = function (uid, text) {
+      const insertMessages = (uid, text) => {
         return new Promise(function (resolve, reject) {
           const query = client.query(
               'INSERT INTO messages (uid, text, created, updated) VALUES ($1, $2, $3, $4)',
               [uid, text, 'NOW()', 'NOW()']);
-          query.on('error', function (err) {
+          query.on('error', (err) => {
             reject(err);
           });
-          query.on('end', function (data) {
+          query.on('end', (data) => {
             resolve(data);
           });
         });
@@ -185,9 +201,9 @@
   };
 
   module.exports = {};
-  module.exports.connectionString = connectionString;
+  module.exports.makeQuery = makeQuery;
   module.exports.createTables = createTables;
   module.exports.deleteTables = deleteTables;
   module.exports.resetTables = resetTables;
   module.exports.insertTestData = insertTestData;
-}());
+})();
