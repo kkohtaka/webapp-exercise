@@ -13,16 +13,17 @@
       process.env.DATABASE_NAME);
 
   const schemes = {
-    messages: {
-      mid: 'SERIAL PRIMARY KEY',
-      text: 'VARCHAR(140) NOT NULL',
-      created: 'TIMESTAMP',
-      updated: 'TIMESTAMP',
-    },
     users: {
       id: 'VARCHAR(30) PRIMARY KEY',
       name: 'VARCHAR(256)',
       email: 'VARCHAR(256)',
+    },
+    messages: {
+      mid: 'SERIAL PRIMARY KEY',
+      uid: 'VARCHAR(30) REFERENCES users(id) NOT NULL',
+      text: 'VARCHAR(140) NOT NULL',
+      created: 'TIMESTAMP',
+      updated: 'TIMESTAMP',
     },
   };
 
@@ -139,10 +140,11 @@
       const client = new pg.Client(connectionString);
       client.connect();
 
-      const insert = function (text) {
-        return new Promise(function (resolve, reject) {
-          const query = client.query('INSERT INTO messages (text, created, updated) VALUES ($1, $2, $3)',
-              [text, 'NOW()', 'NOW()']);
+      const insertUsers = (id, name, email) => {
+        return new Promise((resolve, reject) => {
+          const query = client.query(
+              'INSERT INTO users (id, name, email) VALUES ($1, $2, $3)',
+              [id, name, email]);
           query.on('error', function (err) {
             reject(err);
           });
@@ -151,8 +153,31 @@
           });
         });
       };
-      for (let i = 0; i < 100; i++) {
-        yield insert('Test Message: ' + i);
+      const insertMessages = function (uid, text) {
+        return new Promise(function (resolve, reject) {
+          const query = client.query(
+              'INSERT INTO messages (uid, text, created, updated) VALUES ($1, $2, $3, $4)',
+              [uid, text, 'NOW()', 'NOW()']);
+          query.on('error', function (err) {
+            reject(err);
+          });
+          query.on('end', function (data) {
+            resolve(data);
+          });
+        });
+      };
+      const numTestUsers = 5;
+      const numTestMessages = 100;
+      for (let i = 0; i < numTestUsers; i++) {
+        yield insertUsers(
+            String(i % numTestUsers),
+            'user' + i,
+            'user' + i + '@gmail.com');
+      }
+      for (let i = 0; i < numTestMessages; i++) {
+        yield insertMessages(
+            String(i % numTestUsers),
+            'Test Message: ' + i);
       }
       console.log('Generated.');
       done();

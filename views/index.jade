@@ -38,20 +38,24 @@ block content
     table.message-table.table.table-stripped
       thead
         tr.row
-          th.col-xs-2.col-lg-1.message-id
+          th.col-xs-1.col-lg-1.message-id
             .form-control #
-          th.col-xs-6.col-lg-8.message-text
+          th.col-xs-6.col-lg-6.message-text
             .form-control Text
-          th.col-xs-4.col-lg-3.message-cdate
+          th.col-xs-2.col-lg-2.message-user
+            .form-control User
+          th.col-xs-3.col-lg-3.message-cdate
             .form-control Date
       tbody#message-list-container.infinite-container
 
   script#message-item-template(type='text/x-handlebars-template')
     tr.row.message-item.infinite-item
-      td.col-xs-2.col-lg-1.message-id
+      td.col-xs-1.col-lg-1.message-id
         .form-control {{mid}}
-      td.col-xs-6.col-lg-8.message-text
-      td.col-xs-4.col-lg-3.message-cdate
+      td.col-xs-6.col-lg-6.message-text
+      td.col-xs-2.col-lg-2.message-user
+        .form-control {{name}}
+      td.col-xs-3.col-lg-3.message-cdate
         .form-control {{created}}
 
   script#message-text-template(type='text/x-handlebars-template')

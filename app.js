@@ -10,7 +10,6 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 var messages = require('./routes/messages');
 
 var User = require('./models/user');
@@ -37,12 +36,10 @@ app.use(passport.session());
 
 if (app.get('env') !== 'test') {
   passport.serializeUser((user, done) => {
-    console.log('passport.serializeUser', user);
     done(null, user.id);
   });
 
   passport.deserializeUser((id, done) => {
-    console.log('passport.deserializeUser', id);
     User.findById(id, function(err, user) {
       done(err, user);
     });
@@ -91,7 +88,6 @@ if (app.get('env') !== 'test') {
 }
 
 app.use('/', routes);
-app.use('/api/users', users);
 app.use('/api/messages', messages);
 
 // catch 404 and forward to error handler

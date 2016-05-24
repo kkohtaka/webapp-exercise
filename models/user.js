@@ -5,7 +5,6 @@
 
   const connectionString = require('./database').connectionString;
   const pg = require('pg');
-  const util = require('util');
   const bluebird = require('bluebird');
 
   const makeQuery = (sql, args) => {

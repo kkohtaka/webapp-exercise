@@ -19,6 +19,11 @@ body {
   box-shadow: none;
 }
 
+.message-user > .form-control {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
 .message-cdate > .form-control {
   border: 1px solid transparent;
   box-shadow: none;

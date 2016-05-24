@@ -8,7 +8,15 @@
   var pg = require('pg');
 
   const ensureAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated() || (app.get('env') === 'test')) {
+    if ((app.get('env') === 'test')) {
+      req.user = {
+        id: '0',
+        name: 'user0',
+        email: 'user0@gmail.com',
+      };
+      return next();
+    }
+    if (req.isAuthenticated()) {
       return next();
     }
     return res.status(401).json({
@@ -42,7 +50,8 @@
       var messages = [];
 
       // TODO(kkohtaka): Implement paging.
-      var query = client.query('SELECT * FROM messages ORDER BY mid DESC LIMIT $1 OFFSET $2',
+      var query = client.query(
+          'SELECT * FROM messages INNER JOIN users ON messages.uid = users.id ORDER BY mid DESC LIMIT $1 OFFSET $2',
           [amount, offset]);
       query.on('row', function (row) {
         messages.push(row);
@@ -86,7 +95,8 @@
       }
 
       // TODO(kkohtaka): Implement paging.
-      var query = client.query('SELECT * FROM messages WHERE mid = $1',
+      var query = client.query(
+          'SELECT * FROM messages INNER JOIN users ON messages.uid = users.id WHERE mid = $1',
           [mid]);
 
       var messages = [];
@@ -120,7 +130,8 @@
   /* POST creates a message. */
   router.post('/', ensureAuthenticated, function (req, res, next) {
     // TODO(kkohtaka): Validate input data.
-    var message = req.body;
+    const message = req.body;
+    const user = req.user;
     pg.connect(connectionString, function (err, client, done) {
       if (err) {
         done();
@@ -132,8 +143,8 @@
       }
 
       var query = client.query(
-          'INSERT INTO messages (text, created, updated) VALUES ($1, $2, $3) RETURNING *',
-          [message.text, 'NOW()', 'NOW()']);
+          'INSERT INTO messages (uid, text, created, updated) VALUES ($1, $2, $3, $4) RETURNING *',
+          [user.id, message.text, 'NOW()', 'NOW()']);
 
       var messages = [];
       query.on('row', function (row) {
@@ -226,7 +237,9 @@
         });
       }
 
-      var query = client.query('DELETE FROM messages WHERE mid = $1', [mid]);
+      var query = client.query(
+          'DELETE FROM messages WHERE mid = $1',
+          [mid]);
 
       var messages = [];
       query.on('row', function (row) {
