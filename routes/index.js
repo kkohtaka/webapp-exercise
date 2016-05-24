@@ -2,11 +2,17 @@
 
 const express = require('express');
 const router = express.Router();
+const gravatar = require('gravatar');
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
   console.log('user:', req.user);
-  res.render('index', { title: 'Web Application Exercise' });
+  const user = req.user || {};
+  res.render('index', {
+    title: 'Web Application Exercise',
+    name: user.name,
+    imageURL: user.email ? gravatar.url(user.email, {s:'32'}) : null,
+  });
 });
 
 module.exports = router;

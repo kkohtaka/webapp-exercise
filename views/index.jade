@@ -20,8 +20,15 @@ block content
           p.navbar-text.muted.pull-right
             | Copyright &copy; 2016 Z Lab Corporation All Rights Reserved.
 
-    a(href='/auth/google') Sign In with Google
-
+    if name
+      .alert.alert-info(role='alert')
+        | Hello, #{name}.
+        img.img-rounded(src='#{imageURL}')
+    else
+      .alert.alert-warning(role='alert')
+        | You are not signed in.
+        a.btn.btn-primary(href='/auth/google') Login with Google
+        
     form#message-form.input-group
       input#message-text-input.form-control(type='text')
       .input-group-btn
@@ -38,7 +45,6 @@ block content
           th.col-xs-4.col-lg-3.message-cdate
             .form-control Date
       tbody#message-list-container.infinite-container
-    //- a.infinite-more-link(href='#') More
 
   script#message-item-template(type='text/x-handlebars-template')
     tr.row.message-item.infinite-item
