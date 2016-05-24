@@ -2,8 +2,19 @@
 
 (function () {
   var express = require('express');
+  const passport = require('passport');
+  var app = express();
   var router = express.Router();
   var pg = require('pg');
+
+  const ensureAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated() || (app.get('env') === 'test')) {
+      return next();
+    }
+    return res.status(401).json({
+      success: false,
+    });
+  };
 
   var util = require('util');
 
@@ -18,8 +29,6 @@
   router.get('/', function (req, res, next) {
     const offset = req.query.offset || 0;
     const amount = req.query.amount || 20;
-    console.log('offset: ', offset);
-    console.log('amount: ', amount);
     pg.connect(connectionString, function (err, client, done) {
       if (err) {
         done();
@@ -109,7 +118,7 @@
   });
 
   /* POST creates a message. */
-  router.post('/', function (req, res, next) {
+  router.post('/', ensureAuthenticated, function (req, res, next) {
     // TODO(kkohtaka): Validate input data.
     var message = req.body;
     pg.connect(connectionString, function (err, client, done) {
@@ -156,7 +165,7 @@
   });
 
   /* PUT updates the message. */
-  router.put('/:mid', function (req, res, next) {
+  router.put('/:mid', ensureAuthenticated, function (req, res, next) {
     // TODO(kkohtaka): Validate input data.
     var mid = req.params.mid;
     var message = req.body;
@@ -204,7 +213,7 @@
   });
 
   /* DELETE removes the message. */
-  router.delete('/:mid', function (req, res, next) {
+  router.delete('/:mid', ensureAuthenticated, function (req, res, next) {
     // TODO(kkohtaka): Validate input data.
     var mid = req.params.mid;
     pg.connect(connectionString, function (err, client, done) {

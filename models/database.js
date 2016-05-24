@@ -20,7 +20,7 @@
       updated: 'TIMESTAMP',
     },
     users: {
-      gid: 'VARCHAR(30) PRIMARY KEY',
+      id: 'VARCHAR(30) PRIMARY KEY',
       name: 'VARCHAR(256)',
       email: 'VARCHAR(256)',
     },
@@ -160,6 +160,7 @@
   };
 
   module.exports = {};
+  module.exports.connectionString = connectionString;
   module.exports.createTables = createTables;
   module.exports.deleteTables = deleteTables;
   module.exports.resetTables = resetTables;

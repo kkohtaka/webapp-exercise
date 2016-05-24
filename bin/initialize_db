@@ -3,7 +3,7 @@
 
 export DATABASE_USER=postgres
 export DATABASE_PASS=
-export DATABASE_HOST=192.168.99.100
+export DATABASE_HOST=localhost
 export DATABASE_PORT=5433
 export DATABASE_NAME=development
 

@@ -7,13 +7,13 @@
   var should = require('should');
 
   beforeEach(function (done) {
-    database.resetMessagesTable(function () {
+    database.resetTables(function () {
       database.insertTestData(done);
     });
   });
 
   after(function (done) {
-    database.resetMessagesTable(done);
+    database.resetTables(done);
   });
 
   describe('POST /api/messages', function () {
