@@ -6,7 +6,6 @@ const gravatar = require('gravatar');
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  console.log('user:', req.user);
   const user = req.user || {};
   res.render('index', {
     title: 'Web Application Exercise',

@@ -51,9 +51,13 @@ const moment = require('moment');
     const messageInput = target.find('input.message-update-text-input');
     const messageUpdateButton = target.find('button.message-update-button');
 
-    messageInput.blur((ev) => {
-      makeMessageUneditable(target);
-    });
+    // NOTE: Make uneditable if a user clicked outside of the item.
+    $(document).mouseup((ev) => {
+      if (!target.is(ev.target) && target.has(ev.target).length === 0) {
+        $(document).off('mouseup');
+        makeMessageUneditable(target);
+      }
+    })
     messageUpdateButton.click((ev) => {
       ev.preventDefault();
       updateMessage(mid, messageInput.val(), target);
@@ -134,6 +138,9 @@ const moment = require('moment');
       }
     }).error(function (err) {
       console.error('error: ', err);
+      if (err.status === 401) {
+        $('#alert-modal').modal();
+      }
     }).done(function (data) {
       refreshMessages();
     });
@@ -149,6 +156,11 @@ const moment = require('moment');
       }
     }).error(function (err) {
       console.error('error: ', err);
+      if (err.status === 401) {
+        $('#alert-modal').modal();
+      }
+      const input = target.find('.message-update-text-input');
+      input.val(input.data('default'));
     }).done(function (data) {
       makeMessageUneditable(target);
     });

@@ -48,6 +48,15 @@ block content
             .form-control Date
       tbody#message-list-container.infinite-container
 
+  #alert-modal.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog
+      .modal-content
+        .modal-body
+          .alert.alert-danger(role='alert')
+            | The operation requires signing in
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Close
+  
   script#message-item-template(type='text/x-handlebars-template')
     tr.row.message-item.infinite-item
       td.col-xs-1.col-lg-1.message-id
@@ -68,7 +77,7 @@ block content
 
   script#message-update-form-template(type='text/x-handlebars-template')
     form.message-update-form.input-group
-      input.message-update-text-input.form-control(type='text' value='{{text}}')
+      input.message-update-text-input.form-control(type='text', value='{{text}}', data-default='{{text}}')
       input.message-update-id-input(type='hidden', value='{{mid}}')
       .input-group-btn
         button.message-update-button.btn.btn-default(type='submit')
