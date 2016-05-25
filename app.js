@@ -1,20 +1,24 @@
-var express = require('express');
-var session = require('express-session');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+// Copyright 2016, Z Lab Corporation. All rights reserved.
+
+'use strict';
+
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 
-var routes = require('./routes/index');
-var messages = require('./routes/messages');
+const routes = require('./routes/index');
+const messages = require('./routes/messages');
 
-var User = require('./models/user');
+const User = require('./models/user');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -54,12 +58,12 @@ if (app.get('env') !== 'test') {
     clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
     callbackURL: process.env.GOOGLE_OAUTH_CALLBACK_URL,
     passReqToCallback: true,
-  }, function (token, tokenSecret, _, profile, done) {
+  }, (token, tokenSecret, _, profile, done) => {
     User.findOrCreate({
       id: profile.id,
       name: profile.displayName,
       email: profile.email,
-    }, function (err, user) {
+    }, (err, user) => {
       return done(err, user);
     });
   }));
@@ -91,8 +95,8 @@ app.use('/', routes);
 app.use('/api/messages', messages);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  var err = new Error('Not Found');
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
@@ -102,7 +106,7 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function (err, req, res, next) {
+  app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -113,7 +117,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

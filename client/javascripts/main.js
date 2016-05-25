@@ -88,10 +88,10 @@ const moment = require('moment');
     $.ajax({
       method: 'GET',
       url: '/api/messages?offset=' + messageLength,
-    }).error(function (err) {
+    }).error((err) => {
       console.error('error: ', err);
       loading = false;
-    }).done(function (data) {
+    }).done((data) => {
       const messageTemplate = handlebars.compile(
           $('#message-item-template').html());
       const messages = data.data || [];
@@ -136,12 +136,12 @@ const moment = require('moment');
       data: {
         text: text
       }
-    }).error(function (err) {
+    }).error((err) => {
       console.error('error: ', err);
       if (err.status === 401) {
         $('#alert-modal').modal();
       }
-    }).done(function (data) {
+    }).done((data) => {
       refreshMessages();
     });
   };
@@ -154,14 +154,14 @@ const moment = require('moment');
       data: {
         text: text
       }
-    }).error(function (err) {
+    }).error((err) => {
       console.error('error: ', err);
       if (err.status === 401) {
         $('#alert-modal').modal();
       }
       const input = target.find('.message-update-text-input');
       input.val(input.data('default'));
-    }).done(function (data) {
+    }).done((data) => {
       makeMessageUneditable(target);
     });
   };

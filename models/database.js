@@ -20,13 +20,15 @@
       client.connect();
       const query = client.query(sql, args);
       let users = [];
-      query.on('row', function (row) {
+      query.on('row', (row) => {
         users.push(row);
       });
-      query.on('error', function (err) {
+      query.on('error', (err) => {
+        client.end();
         reject(err);
       });
-      query.on('end', function (data) {
+      query.on('end', (data) => {
+        client.end();
         resolve(users);
       });
     });
@@ -49,49 +51,40 @@
 
   const tableCreater = (name) => {
     const scheme = schemes[name];
+    const schemeString = Object.keys(scheme).map((key, index) => {
+      return key + ' ' + scheme[key];
+    }).join(', ');
+    const sql = util.format('CREATE TABLE IF NOT EXISTS %s(%s)', name, schemeString);
     return (done) => {
-      const schemeString = Object.keys(scheme).map((key, index) => {
-        return key + ' ' + scheme[key];
-      }).join(', ');
-
-      const client = new pg.Client(connectionString);
-      client.connect();
-
-      console.log(name, ': Creating table...');
-      const query = client.query(util.format(
-        'CREATE TABLE IF NOT EXISTS %s(%s)',
-        name, schemeString));
-      query.on('error', (err) => {
-        console.error(name, ': Failed to create.', err);
-        client.end();
-        if (done) done(err);
-      });
-      query.on('end', () => {
-        console.log(name, ': Created.');
-        client.end();
-        if (done) done(null);
-      });
+      bluebird.coroutine(function *() {
+        try {
+          console.log(name, ': Creating table...');
+          yield makeQuery(sql, []);
+          console.log(name, ': Created.');
+          if (done) done(null);
+        } catch (err) {
+          console.error(name, ': Failed to create.', err);
+          if (done) done(err);
+        }
+      })();
     };
   };
 
   const tableDeleter = (name) => {
+    const scheme = schemes[name];
+    const sql = util.format('DROP TABLE IF EXISTS %s', name);
     return (done) => {
-      const client = new pg.Client(connectionString);
-      client.connect();
-
-      console.log(name, ': Dropping table...');
-      const query = client.query(util.format('DROP TABLE IF EXISTS %s',
-        name));
-      query.on('error', (err) => {
-        console.error(name, ': Failed to drop.', err);
-        client.end();
-        if (done) done(err);
-      });
-      query.on('end', () => {
-        console.log(name, ': Dropped.');
-        client.end();
-        if (done) done();
-      });
+      bluebird.coroutine(function *() {
+        try {
+          console.log(name, ': Dropping table...');
+          yield makeQuery(sql, []);
+          console.log(name, ': Dropped.');
+          if (done) done(null);
+        } catch (err) {
+          console.error(name, ': Failed to drop.', err);
+          if (done) done(err);
+        }
+      })();
     };
   };
 
@@ -153,47 +146,26 @@
   const insertTestData = (done) => {
     bluebird.coroutine(function *() {
       console.log('Generating test data...');
-      const client = new pg.Client(connectionString);
-      client.connect();
-
-      const insertUsers = (id, name, email) => {
-        return new Promise((resolve, reject) => {
-          const query = client.query(
-              'INSERT INTO users (id, name, email) VALUES ($1, $2, $3)',
-              [id, name, email]);
-          query.on('error', (err) => {
-            reject(err);
-          });
-          query.on('end', (data) => {
-            resolve(data);
-          });
-        });
-      };
-      const insertMessages = (uid, text) => {
-        return new Promise(function (resolve, reject) {
-          const query = client.query(
-              'INSERT INTO messages (uid, text, created, updated) VALUES ($1, $2, $3, $4)',
-              [uid, text, 'NOW()', 'NOW()']);
-          query.on('error', (err) => {
-            reject(err);
-          });
-          query.on('end', (data) => {
-            resolve(data);
-          });
-        });
-      };
       const numTestUsers = 5;
       const numTestMessages = 100;
       for (let i = 0; i < numTestUsers; i++) {
-        yield insertUsers(
-            String(i % numTestUsers),
-            'user' + i,
-            'user' + i + '@gmail.com');
+        yield makeQuery(
+            'INSERT INTO users (id, name, email) VALUES ($1, $2, $3)',
+            [
+              String(i % numTestUsers),
+              'user' + i,
+              'user' + i + '@gmail.com',
+            ])
       }
       for (let i = 0; i < numTestMessages; i++) {
-        yield insertMessages(
+        yield makeQuery(
+          'INSERT INTO messages (uid, text, created, updated) VALUES ($1, $2, $3, $4)',
+          [
             String(i % numTestUsers),
-            'Test Message: ' + i);
+            'Test Message: ' + i,
+            'NOW()',
+            'NOW()',
+          ]);
       }
       console.log('Generated.');
       done();

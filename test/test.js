@@ -1,42 +1,44 @@
 // Copyright 2016, Z Lab Corporation. All rights reserved.
 
-(function () {
-  var app = require('../app');
-  const database = require('../models/database');
-  var agent = require('supertest').agent(app);
-  var should = require('should');
+(() => {
+  'use strict';
 
-  beforeEach(function (done) {
-    database.resetTables(function () {
+  const app = require('../app');
+  const database = require('../models/database');
+  const agent = require('supertest').agent(app);
+  const should = require('should');
+
+  beforeEach((done) => {
+    database.resetTables(() => {
       database.insertTestData(done);
     });
   });
 
-  after(function (done) {
+  after((done) => {
     database.resetTables(done);
   });
 
-  describe('POST /api/messages', function () {
-    it('should return 200 OK', function (done) {
-      var message = {
+  describe('POST /api/messages', () => {
+    it('should return 200 OK', (done) => {
+      const message = {
         text: 'Hello, Z Lab Web Application.',
       };
       agent.post('/api/messages')
       .send(message)
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         should.not.exist(err);
         done();
       });
     });
   });
 
-  describe('GET /api/messages', function () {
-    it('should return 200 OK', function (done) {
+  describe('GET /api/messages', () => {
+    it('should return 200 OK', (done) => {
       agent.get('/api/messages')
       .send()
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         should.not.exist(err);
         done();
       });
@@ -46,7 +48,7 @@
       agent.get('/api/messages')
       .send()
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         should.not.exist(err);
         res.body.data.should.be.Array();
         res.body.data.should.have.length(20);
@@ -58,7 +60,7 @@
       agent.get('/api/messages?offset=42&amount=5')
       .send()
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         should.not.exist(err);
         res.body.data.should.be.Array();
         res.body.data.should.have.length(5);
@@ -72,48 +74,48 @@
     });
   });
 
-  describe('GET /api/messages/:mid', function () {
-    it('should return 200 OK', function (done) {
-      var mid = '42';
-      var message = {
+  describe('GET /api/messages/:mid', () => {
+    it('should return 200 OK', (done) => {
+      const mid = '42';
+      const message = {
         text: 'Bye, Z Lab Web Application.',
       };
       agent.get('/api/messages/' + mid)
       .send(message)
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         should.not.exist(err);
         done();
       });
     });
   });
 
-  describe('PUT /api/messages/:mid', function () {
-    it('should return 200 OK', function (done) {
-      var mid = '42';
-      var message = {
+  describe('PUT /api/messages/:mid', () => {
+    it('should return 200 OK', (done) => {
+      const mid = '42';
+      const message = {
         text: 'Bye, Z Lab Web Application.',
       };
       agent.put('/api/messages/' + mid)
       .send(message)
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         should.not.exist(err);
         done();
       });
     });
   });
 
-  describe('POST /api/messages/:mid', function () {
-    it('should return 200 OK', function (done) {
-      var mid = '42';
+  describe('POST /api/messages/:mid', () => {
+    it('should return 200 OK', (done) => {
+      const mid = '42';
       agent.delete('/api/messages/' + mid)
       .send()
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         should.not.exist(err);
         done();
       });
     });
   });
-}());
+})();

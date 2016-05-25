@@ -1,6 +1,8 @@
 // Copyright 2016, Z Lab Corporation. All rights reserved.
 
 (function () {
+  'use strict';
+
   var gulp = require('gulp');
   var nodemon = require('gulp-nodemon');
   var mocha = require('gulp-mocha');
