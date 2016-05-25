@@ -25,7 +25,7 @@
     static findOrCreate(profile, done) {
       bluebird.coroutine(function *() {
         try {
-          const users = yield makeQuery('SELECT * FROM users WHERE id = $1',
+          let users = yield makeQuery('SELECT * FROM users WHERE id = $1',
               [profile.id]);
           if (users.length > 0) {
             return done(null, users[0]);
