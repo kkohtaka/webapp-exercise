@@ -1,0 +1,61 @@
+# Copyright 2016, Z Lab Corporation. All rights reserved.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 3000
+      nodePort: 30080
+  selector:
+    app: webapp
+    tier: backend
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webapp
+        tier: backend
+    spec:
+      containers:
+      - name: webapp
+        image: kkohtaka/webapp-exercise
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: NODE_ENV
+          value: development
+        - name: PORT
+          value: '3000'
+        - name: DATABASE_USER
+          value: postgres
+        - name: DATABASE_PASS
+          value:
+        - name: DATABASE_HOST
+          value: localhost
+        - name: DATABASE_PORT
+          value: '5432'
+        - name: DATABASE_NAME
+          value: development
+        - name: GOOGLE_CONSUMER_KEY
+          value: 206888294905-qvs2m4oudqq7k5cpac4vc6lf1racaffh.apps.googleusercontent.com
+        - name: GOOGLE_CONSUMER_SECRET
+          value: avGpzlPDF-vcLhhl4AB4c68w
+        - name: GOOGLE_OAUTH_CALLBACK_URL
+          value: http://localhost:3000/auth/google/callback
+        ports:
+        - containerPort: 3000
