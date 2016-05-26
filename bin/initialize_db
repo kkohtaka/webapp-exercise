@@ -3,8 +3,8 @@
 
 export DATABASE_USER=postgres
 export DATABASE_PASS=
-export DATABASE_HOST=localhost
-export DATABASE_PORT=5433
+export POSTGRES_MASTER_SERVICE_HOST=localhost
+export POSTGRES_MASTER_SERVICE_PORT=5433
 export DATABASE_NAME=development
 
 # NOTE: http://stackoverflow.com/questions/4774054/reliable-way-for-a-bash-script-to-get-the-full-path-to-itself

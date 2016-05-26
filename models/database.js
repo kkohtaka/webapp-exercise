@@ -10,8 +10,8 @@
   const connectionString = util.format('postgres://%s:%s@%s:%s/%s',
       process.env.DATABASE_USER,
       process.env.DATABASE_PASS,
-      process.env.DATABASE_HOST,
-      process.env.DATABASE_PORT,
+      process.env.POSTGRES_MASTER_SERVICE_HOST,
+      process.env.POSTGRES_MASTER_SERVICE_PORT,
       process.env.DATABASE_NAME);
 
   const makeQuery = (sql, args) => {

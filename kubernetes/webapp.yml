@@ -45,10 +45,6 @@ spec:
           value: postgres
         - name: DATABASE_PASS
           value:
-        - name: DATABASE_HOST
-          value: localhost
-        - name: DATABASE_PORT
-          value: '5432'
         - name: DATABASE_NAME
           value: development
         - name: GOOGLE_CONSUMER_KEY
