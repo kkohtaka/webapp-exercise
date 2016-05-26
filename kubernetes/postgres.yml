@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres
+        image: kkohtaka/postgres-webapp-exercise
         resources:
           requests:
             cpu: 100m

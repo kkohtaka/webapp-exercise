@@ -52,6 +52,6 @@ spec:
         - name: GOOGLE_CONSUMER_SECRET
           value: avGpzlPDF-vcLhhl4AB4c68w
         - name: GOOGLE_OAUTH_CALLBACK_URL
-          value: http://localhost:3000/auth/google/callback
+          value: http://webapp.dev:30080/auth/google/callback
         ports:
         - containerPort: 3000
