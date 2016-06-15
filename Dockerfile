@@ -1,18 +1,19 @@
 # Copyright 2016, Z Lab Corporation. All rights reserved.
 
-FROM node:argon
+FROM node:6.2.1
 MAINTAINER Kazumasa Kohtaka "kkohtaka@gmail.com"
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN useradd --user-group --create-home --shell /bin/false app && \
+  npm install --global gulp-cli
 
-# Install app dependencies
-COPY package.json /usr/src/app/
-RUN npm install
+COPY . /home/app/
+RUN chown -R app:app /home/app/*
 
-# Bundle app source
-COPY . /usr/src/app
+USER app
+ENV HOME=/home/app
+WORKDIR /home/app
+RUN npm install && \
+  npm cache clean
 
 EXPOSE 3000
 CMD [ "npm", "start" ]

@@ -112,6 +112,10 @@
     })
     .transform(babelify)
     .bundle()
+    .on('error', function (err) {
+      console.error(err.message);
+      this.emit('end');
+    })
     .pipe(source('bundle.js'))
     // .pipe(buffer())
     // .pipe(sourcemaps.init({
