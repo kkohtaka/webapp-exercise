@@ -1,9 +1,9 @@
 {
-  "name": "zlab-webapp-practice",
-  "version": "0.0.0",
+  "name": "webapp-exercise",
+  "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "6.2.0"
+    "node": "6.2.1"
   },
   "scripts": {
     "start": "node ./bin/www",
