@@ -1,0 +1,26 @@
+version: '2'
+services:
+  webapp-exercise:
+    build: .
+    command: gulp
+    environment:
+      NODE_ENV: test
+      PORT: 3000
+      DATABASE_USER: postgres
+      DATABASE_PASS:
+      POSTGRES_MASTER_SERVICE_HOST: postgres
+      POSTGRES_MASTER_SERVICE_PORT: 5432
+      DATABASE_NAME: development
+    ports:
+    - 3000
+    links:
+    - postgres
+
+  postgres:
+    build: docker/postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD:
+      POSTGRES_DB: development
+    ports:
+    - 5432
