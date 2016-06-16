@@ -2,7 +2,7 @@ version: '2'
 services:
   webapp-exercise:
     build: .
-    command: gulp
+    command: gulp system-test
     environment:
       NODE_ENV: test
       PORT: 3000
@@ -14,6 +14,12 @@ services:
     ports:
     - 3000
     links:
+    - postgres
+    volumes:
+    - .:/home/app/
+    - /home/app/node_modules/
+    - /home/app/public/
+    depends_on:
     - postgres
 
   postgres:

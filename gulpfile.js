@@ -19,7 +19,7 @@
       ext: 'js, jade',
       ignore: [
         'gulpfile.js',
-        'test/',
+        'system-test/',
         'node_modules/',
       ],
       stdout: true,
@@ -29,28 +29,36 @@
     });
   });
 
-  gulp.task('watch', function () {
+  gulp.task('watch-and-run-system-test', function () {
     gulp.watch(
       [
         './app.js',
         './routes/**/*.js',
         './views/**/*.js',
         './models/**/*.js',
-        './test/**/*.js',
+        './system-test/**/*.js',
       ],
-      ['mocha']
+      ['run-system-test']
     );
+  });
 
+  gulp.task('watch-client-src', function () {
     gulp.watch(
       [
         './client/javascripts/**/*.js',
       ],
       ['client-js']
     );
+    gulp.watch(
+      [
+        './client/stylesheets/**/*.css',
+      ],
+      ['client-css']
+    );
   });
 
-  gulp.task('mocha', function () {
-    return gulp.src('./test/**/*.js')
+  gulp.task('run-system-test', function () {
+    return gulp.src('./system-test/**/*.js')
     .pipe(mocha({
       bail: false,
       reporter: 'spec',
@@ -76,7 +84,7 @@
 
   gulp.task('client-css', function () {
     gulp.src([
-      './client/stylesheets/**',
+      './client/stylesheets/**/*.css',
       './node_modules/bootstrap/dist/css/**',
     ])
     .pipe(gulp.dest('./public/stylesheets'));
@@ -91,4 +99,5 @@
 
   gulp.task('default', ['client', 'serve']);
   gulp.task('client', ['client-js', 'client-css', 'client-fonts']);
+  gulp.task('system-test', ['watch-and-run-system-test']);
 }());
