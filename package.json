@@ -27,7 +27,6 @@
     "gulp-livereload": "^3.8.1",
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.7",
-    "gulp-notify": "^2.2.0",
     "handlebars": "^4.0.5",
     "jade": "~1.11.0",
     "jquery": "^2.2.3",

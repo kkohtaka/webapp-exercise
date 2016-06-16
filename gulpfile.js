@@ -7,7 +7,6 @@
   var nodemon = require('gulp-nodemon');
   var mocha = require('gulp-mocha');
   var livereload = require('gulp-livereload');
-  var notify = require('gulp-notify');
   var exit = require('gulp-exit');
   var browserify = require('browserify');
   var babelify = require('babelify');
@@ -19,16 +18,14 @@
       script: './bin/www',
       ext: 'js, jade',
       ignore: [
-        './gulpfile.js',
-        './test/**',
-        './node_modules/**',
-        './client/**'
+        'gulpfile.js',
+        'test/',
+        'node_modules/',
       ],
       stdout: true,
     }).on('restart', function () {
       gulp.src('./bin/www')
-      .pipe(livereload())
-      .pipe(notify('Reloading page, please wait...'));
+      .pipe(livereload());
     });
   });
 
@@ -60,15 +57,6 @@
     }));
   });
 
-  gulp.task('test', function () {
-    return gulp.src('./test/**/*.js')
-    .pipe(mocha({
-      bail: false,
-      reporter: 'spec',
-    }))
-    .pipe(exit());
-  });
-
   gulp.task('client-js', function () {
     browserify({
       entries: [
@@ -88,6 +76,7 @@
 
   gulp.task('client-css', function () {
     gulp.src([
+      './client/stylesheets/**',
       './node_modules/bootstrap/dist/css/**',
     ])
     .pipe(gulp.dest('./public/stylesheets'));
@@ -100,6 +89,6 @@
     .pipe(gulp.dest('./public/fonts'));
   });
 
+  gulp.task('default', ['client', 'serve']);
   gulp.task('client', ['client-js', 'client-css', 'client-fonts']);
-  gulp.task('default', ['client', 'serve', 'mocha', 'watch']);
 }());

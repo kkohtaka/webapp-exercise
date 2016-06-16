@@ -2,7 +2,7 @@ version: '2'
 services:
   webapp-exercise:
     build: .
-    command: npm start
+    command: gulp
     environment:
       NODE_ENV: development
       PORT: 3000
@@ -16,7 +16,14 @@ services:
       GOOGLE_OAUTH_CALLBACK_URL: http://localhost:3000/auth/google/callback
     ports:
     - 3000:3000
+    - 35729:35729
     links:
+    - postgres
+    volumes:
+    - .:/home/app/
+    - /home/app/node_modules/
+    - /home/app/public/
+    depends_on:
     - postgres
 
   postgres:

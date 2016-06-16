@@ -30,4 +30,6 @@ node_modules
 npm-debug.log
 
 # Browserified file
-/public/javascripts/bundle.js
+/public
+
+.v8flags.*.json
