@@ -5,7 +5,9 @@
 
   var gulp = require('gulp');
   var nodemon = require('gulp-nodemon');
+  var webserver = require('gulp-webserver');
   var mocha = require('gulp-mocha');
+  var istanbul = require('gulp-istanbul');
   var livereload = require('gulp-livereload');
   var exit = require('gulp-exit');
   var browserify = require('browserify');
@@ -29,6 +31,15 @@
     });
   });
 
+  gulp.task('coverage', function () {
+    gulp.src('coverage')
+    .pipe(webserver({
+      host: '0.0.0.0',
+      port: 3000,
+      livereload: true,
+    }))
+  });
+
   gulp.task('watch-and-run-system-test', function () {
     gulp.watch(
       [
@@ -39,6 +50,19 @@
         './system-test/**/*.js',
       ],
       ['run-system-test']
+    );
+  });
+
+  gulp.task('watch-and-run-unit-test', function () {
+    gulp.watch(
+      [
+        './app.js',
+        './routes/**/*.js',
+        './views/**/*.js',
+        './models/**/*.js',
+        './system-test/**/*.js',
+      ],
+      ['run-unit-test']
     );
   });
 
@@ -62,6 +86,28 @@
     .pipe(mocha({
       bail: false,
       reporter: 'spec',
+    }));
+  });
+
+  gulp.task('run-unit-pre-test', function () {
+    return gulp.src([
+      './app.js',
+      './routes/**/*.js',
+      './models/**/*.js',
+    ]).pipe(istanbul())
+    .pipe(istanbul.hookRequire());
+  });
+
+  gulp.task('run-unit-test', ['run-unit-pre-test'], function () {
+    return gulp.src('./system-test/**/*.js')
+    .pipe(mocha({
+      bail: false,
+      reporter: 'spec',
+    })).pipe(istanbul.writeReports({
+      dir: './coverage',
+      reporters: ['lcov', 'json', 'text', 'text-summary', 'html'],
+    })).pipe(istanbul.enforceThresholds({
+      thresholds: { global: 90 },
     }));
   });
 
@@ -100,4 +146,5 @@
   gulp.task('default', ['client', 'serve']);
   gulp.task('client', ['client-js', 'client-css', 'client-fonts']);
   gulp.task('system-test', ['watch-and-run-system-test']);
+  gulp.task('unit-test', ['coverage', 'watch-and-run-unit-test']);
 }());
