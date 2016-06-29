@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS messages (
-  mid SERIAL PRIMARY KEY,
-  uid VARCHAR(30) REFERENCES users(id) NOT NULL,
-  text VARCHAR(140) NOT NULL,
-  created TIMESTAMP,
-  updated TIMESTAMP
-);

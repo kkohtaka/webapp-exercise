@@ -1,0 +1,6 @@
+# Copyright 2016, Z Lab Corporation. All rights reserved.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: webapp-exercise

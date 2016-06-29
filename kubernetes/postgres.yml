@@ -1,9 +1,31 @@
 # Copyright 2016, Z Lab Corporation. All rights reserved.
 
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+  namespace: webapp-exercise
+data:
+  0-init-users-table.sql: |
+    CREATE TABLE IF NOT EXISTS users (
+      id VARCHAR(30) PRIMARY KEY,
+      name VARCHAR(256),
+      email VARCHAR(256)
+    );
+  1-init-messages-table.sql: |
+    CREATE TABLE IF NOT EXISTS messages (
+      mid SERIAL PRIMARY KEY,
+      uid VARCHAR(30) REFERENCES users(id) NOT NULL,
+      text VARCHAR(140) NOT NULL,
+      created TIMESTAMP,
+      updated TIMESTAMP
+    );
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: postgres-master
+  namespace: webapp-exercise
   labels:
     app: postgres
     role: master
@@ -21,6 +43,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: postgres-master
+  namespace: webapp-exercise
 spec:
   replicas: 1
   template:
@@ -32,11 +55,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: kkohtaka/postgres-webapp-exercise
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
+        image: postgres
         env:
         - name: NODE_ENV
           value: development
@@ -46,5 +65,18 @@ spec:
           value:
         - name: POSTGRES_DB
           value: development
+        - name: PGDATA
+          value: /data
         ports:
         - containerPort: 5432
+        volumeMounts:
+        - name: data-storage
+          mountPath: /data
+        - name: script-storage
+          mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+      - name: data-storage
+        emptyDir: {}
+      - name: script-storage
+        configMap:
+          name: postgres-init-script
